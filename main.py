@@ -26,7 +26,7 @@ def filtruCrazy():
     #filtrul pentru anotimp
     elementeTabel = 0
     elementCautat = window.findChild(QComboBox, "comboBoxSezon").currentText()
-    for i in range(1, linii):
+    for i in range(1, linii-1):
         if elementCautat in TabelExcel[i-1][1] or elementCautat == "Any":
             Tabelul.insertRow(elementeTabel)
             elementeTabel += 1
