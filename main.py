@@ -3,6 +3,7 @@ import sys
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import *
 from PySide6.QtCore import QFile, QIODevice
+from PySide6.QtGui import QBrush, QColor
 
 TabelExcel = None
 window = None
@@ -35,7 +36,7 @@ def filtruCrazy():
             listaTemporara = []
             copieTabelLinii += 1
             for j in range(1, coloane):
-                Tabelul.setItem(elementeTabel-1, j-1, QTableWidgetItem(TabelExcel[i-1][j-1]))
+                #Tabelul.setItem(elementeTabel-1, j-1, QTableWidgetItem(TabelExcel[i-1][j-1]))
                 listaTemporara.append(str(TabelExcel[i-1][j-1]))
             copieTabel.append(listaTemporara)
     
@@ -49,6 +50,18 @@ def filtruCrazy():
             elementeTabel += 1
             for j in range(1, coloane):
                 Tabelul.setItem(elementeTabel-1, j-1, QTableWidgetItem(copieTabel[i][j-1]))
+                if j-1 == 7:
+                    if copieTabel[i][j-1] == "Yes":
+                        Tabelul.item(elementeTabel-1, j-1).setBackground(QBrush(QColor(0,127,0,255)))
+                    else:
+                        Tabelul.item(elementeTabel-1, j-1).setBackground(QBrush(QColor(127,0,0,255)))  
+
+def apasareCelula(row, column):
+    global window
+    Tabelu = window.findChild(QTableWidget, "tableWidget")
+    print("Mi-ai apasat celula "+str(row)+" "+str(column))
+    #if column == 7 and Tabelu.item(row, column).currentText() == "Yes":
+    #    Tabelu.item(row, column).setBackground(QBrush(QColor(0,127,0,255)))
 
 
 def IncarcaTabel():
@@ -82,6 +95,11 @@ def IncarcaTabel():
                 #TabelExcel[i-2][j-1]
                 listaRand.append(str(celula))
                 Tabelul.setItem(i-2, j-1, QTableWidgetItem(str(celula)))
+                if j-1 == 7:
+                    if str(celula) == "Yes":
+                        Tabelul.item(i-2, j-1).setBackground(QBrush(QColor(0,127,0,255)))
+                    else:
+                        Tabelul.item(i-2, j-1).setBackground(QBrush(QColor(127,0,0,255)))
             else:
                 Tabelul.setHorizontalHeaderItem(j-1, QTableWidgetItem(WorksheetExcel.cell(i, j).value))
         if listaRand:
@@ -111,7 +129,7 @@ if __name__ == "__main__":
     FiltruCombo.currentIndexChanged.connect(filtruCrazy)
     FiltruCombo2 = window.findChild(QComboBox, "comboBoxVreme")
     FiltruCombo2.currentIndexChanged.connect(filtruCrazy)
-
+    TabelMare = window.findChild(QTableWidget, "tableWidget").cellClicked.connect(apasareCelula)
     if not window:
         print(loader.errorString())
         sys.exit(-1)
