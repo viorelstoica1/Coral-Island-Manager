@@ -61,14 +61,24 @@ def apasareCelula(row, column):
     Tabelu = window.findChild(QTableWidget, "tableWidget")
     print("Mi-ai apasat celula "+str(row)+" "+str(column))
     if column == 7:
+        FisieruExcel = load_workbook(filename = 'Fish_table.xlsx')
+        WorksheetExcel = FisieruExcel.active
+        actualRow = 0
+        while TabelExcel[actualRow][0] != Tabelu.item(row, 0).text():
+            actualRow += 1
         if Tabelu.item(row, column).text() == "Yes":
             Tabelu.item(row, column).setText("No")
             Tabelu.item(row, column).setBackground(QBrush(QColor(127,0,0,255))) 
             Tabelu.setStyleSheet("selection-background-color: rgb(127, 0, 0);") 
+            WorksheetExcel["H"+str(actualRow+2)] = "No"
+            TabelExcel[actualRow][7] = "No"
         else:
             Tabelu.item(row, column).setText("Yes")
             Tabelu.item(row, column).setBackground(QBrush(QColor(0,127,0,255)))
             Tabelu.setStyleSheet("selection-background-color: rgb(0, 127, 0);")
+            WorksheetExcel["H"+str(actualRow+2)] = "Yes"
+            TabelExcel[actualRow][7] = "Yes"
+        FisieruExcel.save("Fish_table.xlsx")
     #Tabelu.clearFocus()
 
 def IncarcaTabel():
