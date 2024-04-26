@@ -4,9 +4,10 @@ from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import *
 from PySide6.QtCore import QFile, QIODevice
 
-FisieruExcel = None
 TabelExcel = None
 window = None
+linii = 0
+coloane = 0
 
 def iesire():
     print("Am iesit")
@@ -18,18 +19,30 @@ def DespreNebun():
 
 def filtruCrazy():
     print("Filtram o nebunie mare")
+    global window, TabelExcel
+    Tabelul = window.findChild(QTableView, "tableWidget")
+    Tabelul.setRowCount(0)
+    #Tabelul.setColumnCount(0)
+    #filtrul pentru anotimp
+    elementeTabel = 0
+    elementCautat = window.findChild(QComboBox, "comboBoxSezon").currentText()
+    for i in range(1, linii):
+        if elementCautat in TabelExcel[i-1][1] or elementCautat == "Any":
+            Tabelul.insertRow(elementeTabel)
+            elementeTabel += 1
+            for j in range(1, coloane):
+                Tabelul.setItem(elementeTabel-1, j-1, QTableWidgetItem(TabelExcel[i-1][j-1]))
+
 
 def IncarcaTabel():
     print("Incarc tabelul")
-    global FisieruExcel
     global TabelExcel
     global window
+    global coloane, linii
     FisieruExcel = load_workbook(filename = 'Fish_table.xlsx')
     WorksheetExcel = FisieruExcel.active
-    Textul = window.findChild(QPlainTextEdit, "plainTextEdit")
     print( WorksheetExcel.title)
-    #Textul.setPlainText(WorksheetExcel.title + "\n" + WorksheetExcel.cell(1,1).value)
-    textulTot = ""
+
     coloane = 1
     linii = 1
     while WorksheetExcel.cell(1,coloane).value:
@@ -37,25 +50,26 @@ def IncarcaTabel():
          coloane += 1
     while WorksheetExcel.cell(linii,1).value:
          linii += 1
-    TabelExcel = [[""]*(coloane-1)]*(linii-1)
-    
+    #TabelExcel = [[""]*(coloane-1)]*(linii-1)
+    TabelExcel = []
+
     Tabelul = window.findChild(QTableView, "tableWidget")
     Tabelul.setRowCount(linii-2)
     Tabelul.setColumnCount(coloane-1)
 
     for i in range(1, linii):
+        listaRand = []
         for j in range(1, coloane):
-            TabelExcel[i-1][j-1] = str(WorksheetExcel.cell(i, j).value)
             if i-1 > 0:
-                Tabelul.setItem(i-2, j-1, QTableWidgetItem(TabelExcel[i-1][j-1]))
+                celula =WorksheetExcel.cell(i, j).value
+                #TabelExcel[i-2][j-1]
+                listaRand.append(str(celula))
+                Tabelul.setItem(i-2, j-1, QTableWidgetItem(str(celula)))
             else:
-                Tabelul.setHorizontalHeaderItem(j-1, QTableWidgetItem(TabelExcel[i-1][j-1]))
-            textulTot += str(WorksheetExcel.cell(i, j).value) + " "
-        textulTot += "\n"
-    
-    Textul.setPlainText(textulTot)
-
-
+                Tabelul.setHorizontalHeaderItem(j-1, QTableWidgetItem(WorksheetExcel.cell(i, j).value))
+        if listaRand:
+            TabelExcel.append(listaRand)
+    print("Am incarcat")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -75,6 +89,8 @@ if __name__ == "__main__":
     ButonIncarca.clicked.connect(IncarcaTabel)
     ButonDespre = window.findChild(QPushButton, "pushButton_Despre")
     ButonDespre.clicked.connect(DespreNebun)
+    FiltruCombo = window.findChild(QComboBox, "comboBoxSezon")
+    FiltruCombo.currentIndexChanged.connect(filtruCrazy)
 
     if not window:
         print(loader.errorString())
