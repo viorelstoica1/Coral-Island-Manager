@@ -191,6 +191,9 @@
         <attribute name="horizontalHeaderVisible">
          <bool>true</bool>
         </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>125</number>
+        </attribute>
        </widget>
       </item>
      </layout>

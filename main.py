@@ -24,14 +24,31 @@ def filtruCrazy():
     Tabelul.setRowCount(0)
     #Tabelul.setColumnCount(0)
     #filtrul pentru anotimp
+    copieTabel = []
+    copieTabelLinii = 0
     elementeTabel = 0
     elementCautat = window.findChild(QComboBox, "comboBoxSezon").currentText()
     for i in range(1, linii-1):
         if elementCautat in TabelExcel[i-1][1] or elementCautat == "Any":
             Tabelul.insertRow(elementeTabel)
             elementeTabel += 1
+            listaTemporara = []
+            copieTabelLinii += 1
             for j in range(1, coloane):
                 Tabelul.setItem(elementeTabel-1, j-1, QTableWidgetItem(TabelExcel[i-1][j-1]))
+                listaTemporara.append(str(TabelExcel[i-1][j-1]))
+            copieTabel.append(listaTemporara)
+    
+    #filtru pentru vreme
+    Tabelul.setRowCount(0)
+    elementeTabel = 0
+    elementCautat = window.findChild(QComboBox, "comboBoxVreme").currentText()
+    for i in range(0, copieTabelLinii):
+        if elementCautat in copieTabel[i][2] or elementCautat == "Any" or copieTabel[i][2] == "Any":
+            Tabelul.insertRow(elementeTabel)
+            elementeTabel += 1
+            for j in range(1, coloane):
+                Tabelul.setItem(elementeTabel-1, j-1, QTableWidgetItem(copieTabel[i][j-1]))
 
 
 def IncarcaTabel():
@@ -69,6 +86,7 @@ def IncarcaTabel():
                 Tabelul.setHorizontalHeaderItem(j-1, QTableWidgetItem(WorksheetExcel.cell(i, j).value))
         if listaRand:
             TabelExcel.append(listaRand)
+    Tabelul.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     print("Am incarcat")
 
 if __name__ == "__main__":
@@ -91,6 +109,8 @@ if __name__ == "__main__":
     ButonDespre.clicked.connect(DespreNebun)
     FiltruCombo = window.findChild(QComboBox, "comboBoxSezon")
     FiltruCombo.currentIndexChanged.connect(filtruCrazy)
+    FiltruCombo2 = window.findChild(QComboBox, "comboBoxVreme")
+    FiltruCombo2.currentIndexChanged.connect(filtruCrazy)
 
     if not window:
         print(loader.errorString())
