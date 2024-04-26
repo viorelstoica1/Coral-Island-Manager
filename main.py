@@ -60,9 +60,16 @@ def apasareCelula(row, column):
     global window
     Tabelu = window.findChild(QTableWidget, "tableWidget")
     print("Mi-ai apasat celula "+str(row)+" "+str(column))
-    #if column == 7 and Tabelu.item(row, column).currentText() == "Yes":
-    #    Tabelu.item(row, column).setBackground(QBrush(QColor(0,127,0,255)))
-
+    if column == 7:
+        if Tabelu.item(row, column).text() == "Yes":
+            Tabelu.item(row, column).setText("No")
+            Tabelu.item(row, column).setBackground(QBrush(QColor(127,0,0,255))) 
+            Tabelu.setStyleSheet("selection-background-color: rgb(127, 0, 0);") 
+        else:
+            Tabelu.item(row, column).setText("Yes")
+            Tabelu.item(row, column).setBackground(QBrush(QColor(0,127,0,255)))
+            Tabelu.setStyleSheet("selection-background-color: rgb(0, 127, 0);")
+    #Tabelu.clearFocus()
 
 def IncarcaTabel():
     print("Incarc tabelul")
